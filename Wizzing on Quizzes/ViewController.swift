@@ -10,6 +10,10 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var onClickConnect: UIBarButtonItem!
+    
+    @IBOutlet weak var startQuiz: UIButton!
+    @IBOutlet weak var multiOrSingle: UISegmentedControl!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.

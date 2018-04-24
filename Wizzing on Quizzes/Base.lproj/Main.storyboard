@@ -20,13 +20,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wiz Quiz" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fOD-qR-CO4">
-                                <rect key="frame" x="49" y="64" width="222" height="64.5"/>
+                                <rect key="frame" x="49" y="79" width="222" height="64.5"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="54"/>
                                 <color key="textColor" red="0.0" green="0.47934520244598389" blue="0.99908632040023804" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <segmentedControl opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="l4K-rK-sTV">
-                                <rect key="frame" x="8" y="252.5" width="304" height="29"/>
+                                <rect key="frame" x="8" y="267.5" width="304" height="29"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="28" id="Nwx-wc-RV9"/>
                                 </constraints>
@@ -36,14 +36,14 @@
                                 </segments>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fK4-ja-oyd">
-                                <rect key="frame" x="116" y="307.5" width="88" height="30"/>
+                                <rect key="frame" x="116" y="322.5" width="88" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="HFy-OV-H2u"/>
                                 </constraints>
                                 <state key="normal" title="Start Quiz"/>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="KV0-5l-MYc">
-                                <rect key="frame" x="54" y="136.5" width="212" height="96"/>
+                                <rect key="frame" x="54" y="151.5" width="212" height="96"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="boss" translatesAutoresizingMaskIntoConstraints="NO" id="UwO-Be-J16">
                                         <rect key="frame" x="0.0" y="0.0" width="96" height="96"/>
@@ -64,7 +64,7 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="fOD-qR-CO4" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="AgV-NV-Ai0"/>
+                            <constraint firstItem="fOD-qR-CO4" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="15" id="AgV-NV-Ai0"/>
                             <constraint firstItem="KV0-5l-MYc" firstAttribute="top" secondItem="fOD-qR-CO4" secondAttribute="bottom" constant="8" id="C6u-lJ-B06"/>
                             <constraint firstItem="KV0-5l-MYc" firstAttribute="centerX" secondItem="l4K-rK-sTV" secondAttribute="centerX" id="Gg9-mN-dDD"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KV0-5l-MYc" secondAttribute="trailing" constant="54" id="Jei-zL-5mc"/>

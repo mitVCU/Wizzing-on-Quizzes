@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yv6-6I-oHD">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yv6-6I-oHD">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -27,9 +26,6 @@
                             </label>
                             <segmentedControl opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="l4K-rK-sTV">
                                 <rect key="frame" x="8" y="267.5" width="304" height="29"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="28" id="Nwx-wc-RV9"/>
-                                </constraints>
                                 <segments>
                                     <segment title="Single Player"/>
                                     <segment title="Multi Player"/>
@@ -37,10 +33,10 @@
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fK4-ja-oyd">
                                 <rect key="frame" x="116" y="322.5" width="88" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="HFy-OV-H2u"/>
-                                </constraints>
                                 <state key="normal" title="Start Quiz"/>
+                                <connections>
+                                    <action selector="onClickStartQuiz:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XKO-wr-51q"/>
+                                </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="KV0-5l-MYc">
                                 <rect key="frame" x="54" y="151.5" width="212" height="96"/>
@@ -64,25 +60,26 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="fOD-qR-CO4" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="15" id="AgV-NV-Ai0"/>
-                            <constraint firstItem="KV0-5l-MYc" firstAttribute="top" secondItem="fOD-qR-CO4" secondAttribute="bottom" constant="8" id="C6u-lJ-B06"/>
-                            <constraint firstItem="KV0-5l-MYc" firstAttribute="centerX" secondItem="l4K-rK-sTV" secondAttribute="centerX" id="Gg9-mN-dDD"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KV0-5l-MYc" secondAttribute="trailing" constant="54" id="Jei-zL-5mc"/>
-                            <constraint firstItem="l4K-rK-sTV" firstAttribute="centerX" secondItem="fK4-ja-oyd" secondAttribute="centerX" id="LrC-DY-FTO"/>
-                            <constraint firstItem="fK4-ja-oyd" firstAttribute="top" secondItem="l4K-rK-sTV" secondAttribute="bottom" constant="27" id="T0E-zh-R8c"/>
-                            <constraint firstItem="KV0-5l-MYc" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="54" id="Yyn-1f-MHs"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="fK4-ja-oyd" secondAttribute="bottom" multiplier="16:9" constant="107" id="ZG3-fw-oo1"/>
-                            <constraint firstItem="fOD-qR-CO4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="a32-Qz-n8P"/>
-                            <constraint firstItem="l4K-rK-sTV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="gqY-5F-gee"/>
-                            <constraint firstItem="l4K-rK-sTV" firstAttribute="top" secondItem="KV0-5l-MYc" secondAttribute="bottom" constant="20" id="h9g-VC-tQv"/>
-                            <constraint firstItem="fOD-qR-CO4" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="49" id="jx3-m8-Th7"/>
-                            <constraint firstItem="fK4-ja-oyd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="116" id="pf0-JG-Rkk"/>
-                            <constraint firstItem="KV0-5l-MYc" firstAttribute="top" secondItem="fOD-qR-CO4" secondAttribute="bottom" constant="8" symbolic="YES" id="wE4-s8-cbN"/>
+                            <constraint firstItem="fOD-qR-CO4" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="49" id="2qh-Wa-1Ga"/>
+                            <constraint firstItem="fOD-qR-CO4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7MQ-t3-wTZ"/>
+                            <constraint firstItem="fK4-ja-oyd" firstAttribute="top" secondItem="l4K-rK-sTV" secondAttribute="bottom" constant="27" id="B2p-Z4-5Z0"/>
+                            <constraint firstItem="l4K-rK-sTV" firstAttribute="top" secondItem="KV0-5l-MYc" secondAttribute="bottom" constant="20" id="BBk-GC-YJg"/>
+                            <constraint firstItem="fOD-qR-CO4" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="15" id="IAV-fm-GQR"/>
+                            <constraint firstItem="KV0-5l-MYc" firstAttribute="centerX" secondItem="l4K-rK-sTV" secondAttribute="centerX" id="S4H-3h-HUz"/>
+                            <constraint firstItem="l4K-rK-sTV" firstAttribute="centerX" secondItem="fK4-ja-oyd" secondAttribute="centerX" id="XD0-Gx-E8D"/>
+                            <constraint firstItem="fOD-qR-CO4" firstAttribute="centerX" secondItem="KV0-5l-MYc" secondAttribute="centerX" id="XyS-ao-ued"/>
+                            <constraint firstItem="fK4-ja-oyd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="116" id="d2u-Gj-i9S"/>
+                            <constraint firstItem="KV0-5l-MYc" firstAttribute="top" secondItem="fOD-qR-CO4" secondAttribute="bottom" constant="8" symbolic="YES" id="hdJ-EN-vPh"/>
+                            <constraint firstItem="l4K-rK-sTV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="yon-tP-tBs"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="6FA-OL-axn">
-                        <barButtonItem key="rightBarButtonItem" title="connect " id="lsb-bM-uTq"/>
+                        <barButtonItem key="rightBarButtonItem" title="connect " id="lsb-bM-uTq">
+                            <connections>
+                                <action selector="onClickConnect:" destination="BYZ-38-t0r" id="dAe-L8-K1E"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="multiOrSingle" destination="l4K-rK-sTV" id="XxH-te-QRP"/>

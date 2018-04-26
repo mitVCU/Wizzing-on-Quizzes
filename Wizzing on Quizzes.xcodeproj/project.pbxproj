@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418B454A208F9064000EA384 /* PlayerServiceManager.swift */; };
 		41FE15B3208A7F2500C19B78 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FE15B2208A7F2500C19B78 /* AppDelegate.swift */; };
 		41FE15B5208A7F2500C19B78 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FE15B4208A7F2500C19B78 /* ViewController.swift */; };
 		41FE15B8208A7F2500C19B78 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 41FE15B6208A7F2500C19B78 /* Main.storyboard */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		418B454A208F9064000EA384 /* PlayerServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerServiceManager.swift; sourceTree = "<group>"; };
 		41FE15AF208A7F2500C19B78 /* Wizzing on Quizzes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wizzing on Quizzes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41FE15B2208A7F2500C19B78 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		41FE15B4208A7F2500C19B78 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				41FE15BE208A7F2500C19B78 /* LaunchScreen.storyboard */,
 				41FE15C1208A7F2500C19B78 /* Info.plist */,
 				41FE15B9208A7F2500C19B78 /* Wizzing_on_Quizzes.xcdatamodeld */,
+				418B454A208F9064000EA384 /* PlayerServiceManager.swift */,
 			);
 			path = "Wizzing on Quizzes";
 			sourceTree = "<group>";
@@ -191,7 +194,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Mit Amin";
 				TargetAttributes = {
 					41FE15AE208A7F2500C19B78 = {
@@ -264,6 +267,7 @@
 			files = (
 				41FE15B5208A7F2500C19B78 /* ViewController.swift in Sources */,
 				41FE15BB208A7F2500C19B78 /* Wizzing_on_Quizzes.xcdatamodeld in Sources */,
+				418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */,
 				41FE15B3208A7F2500C19B78 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,6 +337,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -340,6 +345,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -390,6 +396,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -397,6 +404,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

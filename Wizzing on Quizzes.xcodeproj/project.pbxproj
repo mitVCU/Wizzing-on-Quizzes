@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		411360A8209252880049D296 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411360A7209252880049D296 /* QuizViewController.swift */; };
 		418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418B454A208F9064000EA384 /* PlayerServiceManager.swift */; };
 		41FE15B3208A7F2500C19B78 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FE15B2208A7F2500C19B78 /* AppDelegate.swift */; };
 		41FE15B5208A7F2500C19B78 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FE15B4208A7F2500C19B78 /* ViewController.swift */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		411360A7209252880049D296 /* QuizViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		418B454A208F9064000EA384 /* PlayerServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerServiceManager.swift; sourceTree = "<group>"; };
 		41FE15AF208A7F2500C19B78 /* Wizzing on Quizzes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wizzing on Quizzes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41FE15B2208A7F2500C19B78 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				41FE15C1208A7F2500C19B78 /* Info.plist */,
 				41FE15B9208A7F2500C19B78 /* Wizzing_on_Quizzes.xcdatamodeld */,
 				418B454A208F9064000EA384 /* PlayerServiceManager.swift */,
+				411360A7209252880049D296 /* QuizViewController.swift */,
 			);
 			path = "Wizzing on Quizzes";
 			sourceTree = "<group>";
@@ -266,6 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				41FE15B5208A7F2500C19B78 /* ViewController.swift in Sources */,
+				411360A8209252880049D296 /* QuizViewController.swift in Sources */,
 				41FE15BB208A7F2500C19B78 /* Wizzing_on_Quizzes.xcdatamodeld in Sources */,
 				418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */,
 				41FE15B3208A7F2500C19B78 /* AppDelegate.swift in Sources */,

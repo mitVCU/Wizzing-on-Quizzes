@@ -15,6 +15,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var browser: MCBrowserViewController!
     var assistant: MCAdvertiserAssistant!
     
+    var connectedPeers = [MCPeerID]()
+    
     @IBOutlet weak var onClickConnect: UIBarButtonItem!
     @IBOutlet weak var startQuiz: UIButton!
     @IBOutlet weak var multiOrSingle: UISegmentedControl!
@@ -35,10 +37,19 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBAction func onClickStartQuiz(_ sender: UIButton) {
         let playType = multiOrSingle.selectedSegmentIndex
         if (playType == 0){
-            print("we are at 0")
+            print("Its solo mode")
+            performSegue(withIdentifier: "startQuiz", sender: self)
         }
         else if (playType == 1){
-            print("it's one 1")
+            if (connectedPeers.count < 1){
+                createAlert(body: "You are not connected to anyone")
+            }
+            else if (connectedPeers.count > 3){
+                createAlert(body: "You are connected to more than 3 people. Please disconnect some players")
+            }
+            performSegue(withIdentifier: "startQuiz", sender: self)
+            print("it's multi player time")
+           
         }
     }
     
@@ -46,15 +57,19 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         present(browser, animated: true, completion: nil)
     }
     
-    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
-        dismiss(animated: true, completion: nil)
-    }
-    
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        switch state {
+            case MCSessionState.connected:
+                connectedPeers.append(peerID)
+                print("Connected: \(peerID.displayName)")
+            
+            case MCSessionState.connecting:
+                print("Connecting: \(peerID.displayName)")
+            
+            case MCSessionState.notConnected:
+                connectedPeers = connectedPeers.filter({ $0 !== peerID })
+                print("Not Connected: \(peerID.displayName)")
+        }
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -68,6 +83,20 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+    }
+    
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func createAlert(body:String) {
+        let ac = UIAlertController(title: "Error", message: body, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(ac, animated: true, completion: nil)
     }
 }
 

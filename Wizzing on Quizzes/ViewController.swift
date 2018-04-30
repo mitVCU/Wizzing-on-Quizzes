@@ -14,6 +14,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var peerID: MCPeerID!
     var browser: MCBrowserViewController!
     var assistant: MCAdvertiserAssistant!
+    var numOfPlayers = 1
+
     
     var connectedPeers = [MCPeerID]()
     
@@ -61,6 +63,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         switch state {
             case MCSessionState.connected:
                 connectedPeers.append(peerID)
+                numOfPlayers = numOfPlayers + 1
                 print("Connected: \(peerID.displayName)")
             
             case MCSessionState.connecting:
@@ -68,7 +71,16 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             
             case MCSessionState.notConnected:
                 connectedPeers = connectedPeers.filter({ $0 !== peerID })
+                numOfPlayers = numOfPlayers - 1
                 print("Not Connected: \(peerID.displayName)")
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "startQuiz" {
+            if let viewController = segue.destination as? QuizViewController {
+                viewController.numOfPlayers = numOfPlayers
+            }
         }
     }
     

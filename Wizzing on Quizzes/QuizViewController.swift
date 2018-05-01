@@ -9,13 +9,32 @@
 import Foundation
 import UIKit
 
+
+struct QuizResponse: Decodable {
+    let numberOfQuestions: Int
+    let questions: [Question]
+    let topic: String
+    
+    struct Question: Decodable {
+        let number: Int
+        let questionSentence: String
+        let options: [String: String]
+        let correctOption: String
+      
+    }
+}
+
 class QuizViewController: UIViewController {
     
     //temp data
     var  questions = ["Favorite pet?", "Favorite Color?", "Favorite city?"]
     var answersChoices = [["dog", "cat", "bird", "cow"], ["blue", "purple", "red", "green"], ["New York   ", "Tokyo", "Richmond", "Paris"]]
+    var correctAnswers = ["dog", "blue", "Richmond"]
     
     //Variables
+    var jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz1.json"
+    var numberOfQuestions = 0
+    var topic = ""
     var currQuestion = 0
     var correctAnswer = 0
     var seconds = 5
@@ -45,6 +64,27 @@ class QuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard let url = URL(string: jsonUrlString) else {
+            return
+        }
+        URLSession.shared.dataTask(with: url) { (data, response, err) in
+            guard let data = data else {
+                return
+            }
+            
+            do {
+                let quiz = try JSONDecoder().decode(QuizResponse.self, from: data)
+                print(quiz.numberOfQuestions)
+                self.saveJSONData(quiz: quiz)
+                
+            } catch let jsonError {
+                print("Error decoding json", jsonError)
+            }
+            let dataAsAString = String(data: data, encoding: .utf8)
+            print(dataAsAString)
+        }.resume()
+    
 
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
         print(numOfPlayers,"numb")
@@ -67,7 +107,35 @@ class QuizViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        newQuestion()
+       newQuestion()
+    }
+    
+    func saveJSONData(quiz: QuizResponse) {
+        numberOfQuestions = quiz.numberOfQuestions
+        topic = quiz.topic
+        questions = []
+        correctAnswers = []
+        answersChoices = []
+        for each in quiz.questions {
+            questions.append(each.questionSentence)
+            var jsonAnswerChoices: [String] = []
+            for each in each.options {
+                let answer =  each.key + " " + each.value
+                  jsonAnswerChoices.append(answer)
+            }
+            answersChoices.append(jsonAnswerChoices)
+            correctAnswers.append(each.correctOption)
+        }
+        
+        print(questions)
+        print(answersChoices)
+        print(correctAnswers)
+        
+        // To ensure UI change is done on main thread
+        // if not shit goes south
+        DispatchQueue.main.async {
+            self.viewDidAppear(false)
+        }
     }
     
     func newQuestion() {

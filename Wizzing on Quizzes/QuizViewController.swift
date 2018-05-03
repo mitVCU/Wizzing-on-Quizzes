@@ -55,7 +55,10 @@ class QuizViewController: UIViewController {
     @IBOutlet weak var p3: UIImageView!
     @IBOutlet weak var p2: UIImageView!
     @IBOutlet weak var p1: UIImageView!
-    
+    @IBOutlet weak var p1Name: UILabel!
+    @IBOutlet weak var p2Name: UILabel!
+    @IBOutlet weak var p3Name: UILabel!
+    @IBOutlet weak var p4Name: UILabel!
     @IBOutlet weak var p4Answer: UILabel!
     @IBOutlet weak var p3Answer: UILabel!
     @IBOutlet weak var p2Answer: UILabel!
@@ -81,8 +84,8 @@ class QuizViewController: UIViewController {
             } catch let jsonError {
                 print("Error decoding json", jsonError)
             }
-            let dataAsAString = String(data: data, encoding: .utf8)
-            print(dataAsAString)
+//            let dataAsAString = String(data: data, encoding: .utf8)
+//            print(dataAsAString)
         }.resume()
     
 
@@ -104,10 +107,6 @@ class QuizViewController: UIViewController {
             p3.alpha = 1
             p4.alpha = 1
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-       newQuestion()
     }
     
     func saveJSONData(quiz: QuizResponse) {
@@ -134,7 +133,7 @@ class QuizViewController: UIViewController {
         // To ensure UI change is done on main thread
         // if not shit goes south
         DispatchQueue.main.async {
-            self.viewDidAppear(false)
+            self.newQuestion()
         }
     }
     

@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-
+import CoreMotion
 
 struct QuizResponse: Decodable {
     let numberOfQuestions: Int
@@ -42,6 +42,9 @@ class QuizViewController: UIViewController {
     var answers = [UIButton?]()
     var currAnswer = -1
     var numOfPlayers = 1
+    var p1Points = 0
+    var button = UIButton()
+    var submitted = false
     
     //Mark IB-Outlets
     @IBOutlet weak var timerLabel: UILabel!
@@ -63,6 +66,7 @@ class QuizViewController: UIViewController {
     @IBOutlet weak var p3Answer: UILabel!
     @IBOutlet weak var p2Answer: UILabel!
     @IBOutlet weak var p1Answer: UILabel!
+    @IBOutlet weak var ResetBtn: UIButton!
     
     
     override func viewDidLoad() {
@@ -88,7 +92,7 @@ class QuizViewController: UIViewController {
 //            print(dataAsAString)
         }.resume()
     
-
+        ResetBtn.alpha = 0
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
         print(numOfPlayers,"numb")
         switch numOfPlayers{
@@ -122,7 +126,7 @@ class QuizViewController: UIViewController {
                 let answer =  each.key + " " + each.value
                   jsonAnswerChoices.append(answer)
             }
-            answersChoices.append(jsonAnswerChoices)
+            answersChoices.append(jsonAnswerChoices.sorted())
             correctAnswers.append(each.correctOption)
         }
         
@@ -138,45 +142,34 @@ class QuizViewController: UIViewController {
     }
     
     func newQuestion() {
+        questionCount.text = "Question \(currQuestion+1)/\(questions.count)"
         question.text = questions[currQuestion]
-        correctAnswer = Int(arc4random_uniform(4)+1)  // change so correct answer is set correctly
         
-        var button:UIButton = UIButton()
+        switch correctAnswers[currQuestion]{
+        case "A":
+            correctAnswer = 1
+        case "B":
+            correctAnswer = 2
+        case "C":
+            correctAnswer = 3
+        case "D":
+            correctAnswer = 4
+        default:
+            correctAnswer = 1
+        }
+
         //create btn
-        var x = 1
         for i in 1...4{
             button = view.viewWithTag(i) as! UIButton
             answers.append(button)
-            if (i == correctAnswer){
-                button.setTitle(answersChoices[currQuestion][0], for: .normal)
-            }
-            else {
-                button.setTitle(answersChoices[currQuestion][x], for: .normal)
-                x = x + 1
-            }
+            button.setTitle(answersChoices[currQuestion][i-1], for: .normal)
+            button.addTarget(self, action: #selector(multipleTap(_:event:)), for: UIControlEvents.touchDownRepeat)
         }
         currQuestion = currQuestion + 1
-
     }
     
     @IBAction func answerTapped(_ sender: UIButton) {
-        if (currAnswer == sender.tag){
-            print("will be submitting answer") //TODO send answer
-            switch currAnswer{
-            case 1:
-                p1Answer.text = "a"
-            case 2:
-                p1Answer.text = "b"
-            case 3:
-                p1Answer.text = "c"
-            case 4:
-                p1Answer.text = "d"
-
-            default:
-                p1Answer.alpha = 0
-            }
-        }
-        else{
+        if (!submitted){
             if (currAnswer == -1){
                 sender.alpha = 0.5
                 currAnswer = sender.tag
@@ -190,25 +183,54 @@ class QuizViewController: UIViewController {
         print(currAnswer)
     }
     
+    @objc func multipleTap(_ sender: UIButton, event: UIEvent) {
+        let touch: UITouch = event.allTouches!.first!
+        if (touch.tapCount == 2 ) {
+            submit()
+        }
+    }
+    
+    func submit() {
+        print(currAnswer,"current Answer")
+        submitted = true
+        switch currAnswer{
+        case 1:
+            p1Answer.text = "A"
+        case 2:
+            p1Answer.text = "B"
+        case 3:
+            p1Answer.text = "C"
+        case 4:
+            p1Answer.text = "D"
+        default:
+            p1Answer.alpha = 0
+        }
+        
+        if (currAnswer == correctAnswer){
+            p1Points = p1Points + 1
+            p1Score.text = "\(p1Points)"
+        }
+    }
+    
 
     @objc func countDown (){
         seconds = seconds - 1
         timerLabel.text = "\(seconds)"
         if (seconds == 0){
             TIMER.invalidate()
+
             print("will be submitting answer") //TODO send answer
-            switch currAnswer{
-            case 1:
-                p1Answer.text = "a"
-            case 2:
-                p1Answer.text = "b"
-            case 3:
-                p1Answer.text = "c"
-            case 4:
-                p1Answer.text = "d"
-                
-            default:
-                p1Answer.alpha = 0
+            submit()
+    
+            if (currQuestion != questions.count){
+                seconds = 5
+                TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
+                newQuestion()
+                submitted = false
+            }
+            else{
+                timerLabel.text = "You Won with \(p1Points) Points"
+                ResetBtn.alpha = 1
             }
         }
     }

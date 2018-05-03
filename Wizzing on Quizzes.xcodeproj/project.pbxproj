@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		41103075209B23EA00C8B2C0 /* arrayExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41103074209B23EA00C8B2C0 /* arrayExt.swift */; };
 		411360A8209252880049D296 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411360A7209252880049D296 /* QuizViewController.swift */; };
 		418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418B454A208F9064000EA384 /* PlayerServiceManager.swift */; };
 		41FE15B3208A7F2500C19B78 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FE15B2208A7F2500C19B78 /* AppDelegate.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		41103074209B23EA00C8B2C0 /* arrayExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = arrayExt.swift; sourceTree = "<group>"; };
 		411360A7209252880049D296 /* QuizViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		418B454A208F9064000EA384 /* PlayerServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerServiceManager.swift; sourceTree = "<group>"; };
 		41FE15AF208A7F2500C19B78 /* Wizzing on Quizzes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wizzing on Quizzes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -112,6 +114,7 @@
 				41FE15B9208A7F2500C19B78 /* Wizzing_on_Quizzes.xcdatamodeld */,
 				418B454A208F9064000EA384 /* PlayerServiceManager.swift */,
 				411360A7209252880049D296 /* QuizViewController.swift */,
+				41103074209B23EA00C8B2C0 /* arrayExt.swift */,
 			);
 			path = "Wizzing on Quizzes";
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				41FE15B5208A7F2500C19B78 /* ViewController.swift in Sources */,
+				41103075209B23EA00C8B2C0 /* arrayExt.swift in Sources */,
 				411360A8209252880049D296 /* QuizViewController.swift in Sources */,
 				41FE15BB208A7F2500C19B78 /* Wizzing_on_Quizzes.xcdatamodeld in Sources */,
 				418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */,
@@ -443,7 +447,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = JZRGG2W4BA;
+				DEVELOPMENT_TEAM = M84D5994X4;
 				INFOPLIST_FILE = "Wizzing on Quizzes/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "vcu.Wizzing-on-Quizzes";
@@ -458,7 +462,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = JZRGG2W4BA;
+				DEVELOPMENT_TEAM = M84D5994X4;
 				INFOPLIST_FILE = "Wizzing on Quizzes/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "vcu.Wizzing-on-Quizzes";
@@ -544,7 +548,7 @@
 				41FE15D9208A7F2500C19B78 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		41FE15DA208A7F2500C19B78 /* Build configuration list for PBXNativeTarget "Wizzing on Quizzes" */ = {
 			isa = XCConfigurationList;
@@ -553,7 +557,7 @@
 				41FE15DC208A7F2500C19B78 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		41FE15DD208A7F2500C19B78 /* Build configuration list for PBXNativeTarget "Wizzing on QuizzesTests" */ = {
 			isa = XCConfigurationList;
@@ -562,7 +566,7 @@
 				41FE15DF208A7F2500C19B78 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		41FE15E0208A7F2500C19B78 /* Build configuration list for PBXNativeTarget "Wizzing on QuizzesUITests" */ = {
 			isa = XCConfigurationList;
@@ -571,7 +575,7 @@
 				41FE15E2208A7F2500C19B78 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 

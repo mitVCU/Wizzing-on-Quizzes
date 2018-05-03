@@ -45,6 +45,7 @@ class QuizViewController: UIViewController {
     var p1Points = 0
     var button = UIButton()
     var submitted = false
+    var moitionMangager = CMMotionManager()
     
     //Mark IB-Outlets
     @IBOutlet weak var timerLabel: UILabel!
@@ -71,7 +72,6 @@ class QuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         guard let url = URL(string: jsonUrlString) else {
             return
         }
@@ -79,19 +79,19 @@ class QuizViewController: UIViewController {
             guard let data = data else {
                 return
             }
-            
             do {
                 let quiz = try JSONDecoder().decode(QuizResponse.self, from: data)
                 print(quiz.numberOfQuestions)
                 self.saveJSONData(quiz: quiz)
-                
             } catch let jsonError {
                 print("Error decoding json", jsonError)
             }
 //            let dataAsAString = String(data: data, encoding: .utf8)
 //            print(dataAsAString)
         }.resume()
-    
+        
+        self.becomeFirstResponder()
+        
         ResetBtn.alpha = 0
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
         print(numOfPlayers,"numb")
@@ -113,12 +113,37 @@ class QuizViewController: UIViewController {
         }
     }
     
+    // We are willing to become first responder to get shake motion
+    override var canBecomeFirstResponder: Bool {
+        get {
+            return true
+        }
+    }
+    
+    // Enable detection of shake motion
+    override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            print("Why are you shaking me?")
+            let randomChoice = (answers.random())!!
+            if (currAnswer == -1){
+                currAnswer = randomChoice.tag
+                randomChoice.alpha = 0.5
+            }
+            else{
+                answers[currAnswer - 1]?.alpha = 1
+                currAnswer = randomChoice.tag
+                randomChoice.alpha = 0.5
+            }
+        }
+    }
+    
     func saveJSONData(quiz: QuizResponse) {
         numberOfQuestions = quiz.numberOfQuestions
         topic = quiz.topic
         questions = []
         correctAnswers = []
         answersChoices = []
+        
         for each in quiz.questions {
             questions.append(each.questionSentence)
             var jsonAnswerChoices: [String] = []
@@ -130,9 +155,9 @@ class QuizViewController: UIViewController {
             correctAnswers.append(each.correctOption)
         }
         
-        print(questions)
-        print(answersChoices)
-        print(correctAnswers)
+        print("Questions: ", questions)
+        print("Answers: ", answersChoices)
+        print("Correct Answers: ", correctAnswers)
         
         // To ensure UI change is done on main thread
         // if not shit goes south

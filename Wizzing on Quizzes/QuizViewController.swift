@@ -325,15 +325,6 @@ class QuizViewController: UIViewController  {
         print(currAnswer)
     }
     
-    /*
-    @objc func multipleTap(_ sender: UIButton, event: UIEvent) {
-        let touch: UITouch = event.allTouches!.first!
-        if (touch.tapCount == 2 ) {
-            submit()
-        }
-    }
- */
-    
     func submit() {
         print(currAnswer,"Submitting Answer")
         submitted = true

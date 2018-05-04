@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import CoreMotion
+import MultipeerConnectivity
 
 struct QuizResponse: Decodable {
     let numberOfQuestions: Int
@@ -24,7 +25,8 @@ struct QuizResponse: Decodable {
     }
 }
 
-class QuizViewController: UIViewController {
+class QuizViewController: UIViewController  {
+    
     
     //temp data
     var  questions = ["Favorite pet?", "Favorite Color?", "Favorite city?"]
@@ -46,6 +48,11 @@ class QuizViewController: UIViewController {
     var button = UIButton()
     var submitted = false
     var moitionMangager = CMMotionManager()
+    var peerId = MCPeerID(displayName: UIDevice.current.name)
+    var mcSession: MCSession!
+    var mcAdvertiserAsst: MCAdvertiserAssistant!
+    var selectedAnswer: Int = -1
+    var lastZ = 0
     
     //Mark IB-Outlets
     @IBOutlet weak var timerLabel: UILabel!
@@ -68,27 +75,17 @@ class QuizViewController: UIViewController {
     @IBOutlet weak var p2Answer: UILabel!
     @IBOutlet weak var p1Answer: UILabel!
     @IBOutlet weak var ResetBtn: UIButton!
+    @IBOutlet weak var aButton: UIButton!
+    @IBOutlet weak var bButton: UIButton!
+    @IBOutlet weak var cButton: UIButton!
+    @IBOutlet weak var dButton: UIButton!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let url = URL(string: jsonUrlString) else {
-            return
-        }
-        URLSession.shared.dataTask(with: url) { (data, response, err) in
-            guard let data = data else {
-                return
-            }
-            do {
-                let quiz = try JSONDecoder().decode(QuizResponse.self, from: data)
-                print(quiz.numberOfQuestions)
-                self.saveJSONData(quiz: quiz)
-            } catch let jsonError {
-                print("Error decoding json", jsonError)
-            }
-//            let dataAsAString = String(data: data, encoding: .utf8)
-//            print(dataAsAString)
-        }.resume()
+        
+       // setUpConnectivity()
+        grabQuizJSON()
         
         self.becomeFirstResponder()
         
@@ -111,8 +108,79 @@ class QuizViewController: UIViewController {
             p3.alpha = 1
             p4.alpha = 1
         }
+        
+        moitionMangager.startAccelerometerUpdates()
+        moitionMangager.accelerometerUpdateInterval = 0.2
+        moitionMangager.startAccelerometerUpdates(to: OperationQueue.main) {
+            (data, err) in
+            
+            if let data = data {
+                if data.acceleration.x > 1.0 {
+                    self.moveAnswerRight()
+                } else if data.acceleration.x < -1.0 {
+                    self.moveAnswerLeft()
+                }
+                
+                if data.acceleration.y > 1.0 {
+                    self.moveAnswerUp()
+                } else if data.acceleration.y < -1.0{
+                    self.moveAnswerDown()
+                }
+                
+                if data.acceleration.z < -1.0 {
+                    print("submit")
+                }
+                
+            } else {
+                print("where's all the data")
+            }
+           
+            
+        }
+        
     }
     
+    func moveAnswerLeft() {
+        if currAnswer != -1 {
+            if currAnswer == 2 {
+                aButton.sendActions(for: .touchUpInside)
+            } else if currAnswer == 4{
+                cButton.sendActions(for: .touchUpInside)
+            }
+        }
+    }
+    
+    func moveAnswerRight() {
+        if currAnswer != -1 {
+            if currAnswer == 1 {
+                bButton.sendActions(for: .touchUpInside)
+            } else if currAnswer == 3{
+                dButton.sendActions(for: .touchUpInside)
+            }
+        }
+    }
+    
+    func moveAnswerUp() {
+        if currAnswer != -1 {
+            if currAnswer == 3 {
+                aButton.sendActions(for: .touchUpInside)
+            } else if currAnswer == 4{
+                bButton.sendActions(for: .touchUpInside)
+            }
+        }
+        
+    }
+    
+    func moveAnswerDown() {
+        if currAnswer != -1 {
+            if currAnswer == 1 {
+                cButton.sendActions(for: .touchUpInside)
+            } else if currAnswer == 2{
+                dButton.sendActions(for: .touchUpInside)
+            }
+        }
+        
+    }
     // We are willing to become first responder to get shake motion
     override var canBecomeFirstResponder: Bool {
         get {
@@ -124,7 +192,15 @@ class QuizViewController: UIViewController {
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
             print("Why are you shaking me?")
-            let randomChoice = (answers.random())!!
+            var randomChoice = (answers.random())!!
+            var randomChoiceNotAlreadySelected = true
+            while randomChoiceNotAlreadySelected {
+                if randomChoice.tag != currAnswer {
+                    randomChoiceNotAlreadySelected = false
+                } else {
+                    randomChoice = (answers.random())!!
+                }
+            }
             if (currAnswer == -1){
                 currAnswer = randomChoice.tag
                 randomChoice.alpha = 0.5
@@ -135,6 +211,24 @@ class QuizViewController: UIViewController {
                 randomChoice.alpha = 0.5
             }
         }
+       
+    }
+    
+    func grabQuizJSON() {
+        guard let url = URL(string: jsonUrlString) else {
+            return
+        }
+        URLSession.shared.dataTask(with: url) { (data, response, err) in
+            guard let data = data else {
+                return
+            }
+            do {
+                let quiz = try JSONDecoder().decode(QuizResponse.self, from: data)
+                self.saveJSONData(quiz: quiz)
+            } catch let jsonError {
+                print("Error decoding json", jsonError)
+            }
+            }.resume()
     }
     
     func saveJSONData(quiz: QuizResponse) {
@@ -154,10 +248,7 @@ class QuizViewController: UIViewController {
             answersChoices.append(jsonAnswerChoices.sorted())
             correctAnswers.append(each.correctOption)
         }
-        
-        print("Questions: ", questions)
-        print("Answers: ", answersChoices)
-        print("Correct Answers: ", correctAnswers)
+
         
         // To ensure UI change is done on main thread
         // if not shit goes south
@@ -167,7 +258,10 @@ class QuizViewController: UIViewController {
     }
     
     func newQuestion() {
+        
+        seconds = 5
         questionCount.text = "Question \(currQuestion+1)/\(questions.count)"
+        print("New question number", currQuestion)
         question.text = questions[currQuestion]
         
         switch correctAnswers[currQuestion]{
@@ -187,8 +281,9 @@ class QuizViewController: UIViewController {
         for i in 1...4{
             button = view.viewWithTag(i) as! UIButton
             answers.append(button)
+            button.alpha = 1
             button.setTitle(answersChoices[currQuestion][i-1], for: .normal)
-            button.addTarget(self, action: #selector(multipleTap(_:event:)), for: UIControlEvents.touchDownRepeat)
+          //  button.addTarget(self, action: #selector(multipleTap(_:event:)), for: UIControlEvents.touchDownRepeat)
         }
         currQuestion = currQuestion + 1
     }
@@ -196,10 +291,16 @@ class QuizViewController: UIViewController {
     @IBAction func answerTapped(_ sender: UIButton) {
         if (!submitted){
             if (currAnswer == -1){
+                print("First tap")
                 sender.alpha = 0.5
                 currAnswer = sender.tag
             }
+            else if (currAnswer == sender.tag) {
+                print("Second tap")
+                submit()
+            }
             else{
+                print("Chose new answer")
                 answers[currAnswer - 1]?.alpha = 1
                 currAnswer = sender.tag
                 sender.alpha = 0.5
@@ -208,15 +309,17 @@ class QuizViewController: UIViewController {
         print(currAnswer)
     }
     
+    /*
     @objc func multipleTap(_ sender: UIButton, event: UIEvent) {
         let touch: UITouch = event.allTouches!.first!
         if (touch.tapCount == 2 ) {
             submit()
         }
     }
+ */
     
     func submit() {
-        print(currAnswer,"current Answer")
+        print(currAnswer,"Submitting Answer")
         submitted = true
         switch currAnswer{
         case 1:
@@ -235,12 +338,52 @@ class QuizViewController: UIViewController {
             p1Points = p1Points + 1
             p1Score.text = "\(p1Points)"
         }
+        
+        currAnswer = -1
+        
+        if (numOfPlayers == 1) {
+            if (currQuestion != questions.count) {
+               // newQuestion()
+               // submitted = false
+             //   seconds = 6
+                
+                seconds = 0
+            } else {
+                endGame()
+            }
+        } else {
+            //TODO check to see if other players have submitted
+        }
     }
     
+    func endGame() {
+        
+        if numOfPlayers == 1 {
+            // that short so it fits on a small screen
+            timerLabel.text = "Game Over: \(p1Points) points"
+        } else {
+            let place = determinePlace()
+            if place == 1 {
+                timerLabel.text = "You Won with \(p1Points) Points"
+            } else if place == 2 {
+                timerLabel.text = "\(place)nd with \(p1Points) Points"
+            } else if place == 3 {
+                timerLabel.text = "\(place)rd with \(p1Points) Points"
+            } else if place == 4{
+                timerLabel.text = "\(place)th with \(p1Points) Points"
+            }
+        }
+        ResetBtn.alpha = 1
+        self.TIMER.invalidate()
+    }
+    
+    func determinePlace() -> Int {
+        //TODO: Compare to other users score
+        return 1
+    }
 
     @objc func countDown (){
-        seconds = seconds - 1
-        timerLabel.text = "\(seconds)"
+        
         if (seconds == 0){
             TIMER.invalidate()
 
@@ -252,11 +395,58 @@ class QuizViewController: UIViewController {
                 TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
                 newQuestion()
                 submitted = false
+                
             }
             else{
-                timerLabel.text = "You Won with \(p1Points) Points"
-                ResetBtn.alpha = 1
+              endGame()
             }
+        } else {
+            timerLabel.text = "\(seconds)"
+            seconds = seconds - 1
         }
     }
+    
+    @IBAction func resetTapped(_ sender: Any) {
+        self.performSegue(withIdentifier: "backToMain", sender: self)
+    }
+    
+    /*
+    
+    func setUpConnectivity() {
+        mcSession = MCSession(peer: peerId, securityIdentity: nil, encryptionPreference: .required)
+        mcSession.delegate = self
+        self.mcAdvertiserAsst = MCAdvertiserAssistant(serviceType: "", discoveryInfo: <#T##[String : String]?#>, session: <#T##MCSession#>)
+        
+    }
+    
+    // Mark MCBrowserViewControllerDelegate Methods
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+        //
+    }
+    
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+        //
+    }
+    
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        //
+    }
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        //
+    }
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        //
+    }
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+        //
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        //
+    }
+ */
+
 }

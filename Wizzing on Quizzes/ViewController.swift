@@ -49,6 +49,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             else if (connectedPeers.count > 3){
                 createAlert(body: "You are connected to more than 3 people. Please disconnect some players")
             }
+            //TODO start game for all players
             performSegue(withIdentifier: "startQuiz", sender: self)
             print("it's multi player time")
            

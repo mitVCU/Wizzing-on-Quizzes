@@ -81,6 +81,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         if segue.identifier == "startQuiz" {
             if let viewController = segue.destination as? QuizViewController {
                 viewController.numOfPlayers = numOfPlayers
+                viewController.session = session
             }
         }
     }

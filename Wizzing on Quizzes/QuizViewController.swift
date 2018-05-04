@@ -53,6 +53,7 @@ class QuizViewController: UIViewController  {
     var mcAdvertiserAsst: MCAdvertiserAssistant!
     var selectedAnswer: Int = -1
     var lastZ = 0
+    var session : MCSession!
     
     //Mark IB-Outlets
     @IBOutlet weak var timerLabel: UILabel!
@@ -134,11 +135,9 @@ class QuizViewController: UIViewController  {
             } else {
                 print("where's all the data")
             }
-           
-            
         }
-        
     }
+    
     
     func moveAnswerLeft() {
         if currAnswer != -1 {
@@ -317,6 +316,34 @@ class QuizViewController: UIViewController  {
         }
     }
  */
+    
+    func sendAnswer() {
+       print( session.connectedPeers.count )
+        if (submitted){
+            let dataToSend =  NSKeyedArchiver.archivedData(withRootObject: currAnswer)
+            do{
+                try session.send(dataToSend, toPeers: session.connectedPeers, with: .reliable)
+            }
+            catch let err {
+                print("Error in sending data \(err)")
+            }
+        }
+    }
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID){
+        DispatchQueue.main.async(execute: {
+            if let receivedString = NSKeyedUnarchiver.unarchiveObject(with: data) as? String{
+                self.updateScore(score: receivedString, id: peerID)
+            }
+            
+        })
+        
+    }
+    func updateScore(score: String, id: MCPeerID){
+        print(score, ": recieved score  ", id, " :peer ID ")
+    }
+    
+    
     
     func submit() {
         print(currAnswer,"Submitting Answer")

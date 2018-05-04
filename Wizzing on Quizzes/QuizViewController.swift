@@ -81,7 +81,8 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     @IBOutlet weak var bButton: UIButton!
     @IBOutlet weak var cButton: UIButton!
     @IBOutlet weak var dButton: UIButton!
-    
+    @IBOutlet weak var flipBubble1: UIImageView!
+    @IBOutlet weak var flipBubble2: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()

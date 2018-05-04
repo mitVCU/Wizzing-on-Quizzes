@@ -80,10 +80,13 @@ class QuizViewController: UIViewController  {
     @IBOutlet weak var bButton: UIButton!
     @IBOutlet weak var cButton: UIButton!
     @IBOutlet weak var dButton: UIButton!
-    
+    @IBOutlet weak var flipBubble1: UIImageView!
+    @IBOutlet weak var flipBubble2: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Any UI set up needed should be done here
+        setUpView()
         
        // setUpConnectivity()
         grabQuizJSON()
@@ -145,14 +148,19 @@ class QuizViewController: UIViewController  {
         
     }
     
+    //Any Ui setup required
+    func setUpView() {
+        p3.transform = CGAffineTransform(scaleX: -1, y: 1)
+        flipBubble1.transform = CGAffineTransform(scaleX: -1, y: 1)
+        flipBubble2.transform = CGAffineTransform(scaleX: -1, y: 1)
+    }
+    
     @objc func checkForYaw() {
         if let data = moitionMangager.deviceMotion {
             let yaw = data.attitude.yaw
             if yaw > 1 || yaw < -1 {
                 print("submit")
             }
-        } else {
-            print("yaw failed")
         }
     }
     

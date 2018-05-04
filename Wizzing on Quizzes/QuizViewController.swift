@@ -41,6 +41,7 @@ class QuizViewController: UIViewController  {
     var correctAnswer = 0
     var seconds = 5
     var TIMER = Timer()
+    var yawTimer = Timer()
     var answers = [UIButton?]()
     var currAnswer = -1
     var numOfPlayers = 1
@@ -89,6 +90,8 @@ class QuizViewController: UIViewController  {
         
         self.becomeFirstResponder()
         
+        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
+        
         ResetBtn.alpha = 0
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
         print(numOfPlayers,"numb")
@@ -111,9 +114,10 @@ class QuizViewController: UIViewController  {
         
         moitionMangager.startAccelerometerUpdates()
         moitionMangager.accelerometerUpdateInterval = 0.2
+        moitionMangager.startDeviceMotionUpdates()
         moitionMangager.startAccelerometerUpdates(to: OperationQueue.main) {
             (data, err) in
-            
+        
             if let data = data {
                 if data.acceleration.x > 1.0 {
                     self.moveAnswerRight()
@@ -130,6 +134,7 @@ class QuizViewController: UIViewController  {
                 if data.acceleration.z < -1.0 {
                     print("submit")
                 }
+
                 
             } else {
                 print("where's all the data")
@@ -138,6 +143,17 @@ class QuizViewController: UIViewController  {
             
         }
         
+    }
+    
+    @objc func checkForYaw() {
+        if let data = moitionMangager.deviceMotion {
+            let yaw = data.attitude.yaw
+            if yaw > 1 || yaw < -1 {
+                print("submit")
+            }
+        } else {
+            print("yaw failed")
+        }
     }
     
     func moveAnswerLeft() {
@@ -409,44 +425,5 @@ class QuizViewController: UIViewController  {
     @IBAction func resetTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "backToMain", sender: self)
     }
-    
-    /*
-    
-    func setUpConnectivity() {
-        mcSession = MCSession(peer: peerId, securityIdentity: nil, encryptionPreference: .required)
-        mcSession.delegate = self
-        self.mcAdvertiserAsst = MCAdvertiserAssistant(serviceType: "", discoveryInfo: <#T##[String : String]?#>, session: <#T##MCSession#>)
-        
-    }
-    
-    // Mark MCBrowserViewControllerDelegate Methods
-    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
-        //
-    }
-    
-    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
-        //
-    }
-    
-    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        //
-    }
-    
-    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        //
-    }
-    
-    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        //
-    }
-    
-    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        //
-    }
-    
-    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
-        //
-    }
- */
 
 }

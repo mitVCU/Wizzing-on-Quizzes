@@ -8,7 +8,7 @@
 
 import UIKit
 import MultipeerConnectivity
-class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate {
+class ViewController:  UIViewController , MCBrowserViewControllerDelegate, MCSessionDelegate {
     
     var session : MCSession!
     var peerID: MCPeerID!
@@ -17,7 +17,6 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var numOfPlayers = 1
 
     
-    var connectedPeers = [MCPeerID]()
     
     @IBOutlet weak var onClickConnect: UIBarButtonItem!
     @IBOutlet weak var startQuiz: UIButton!
@@ -30,8 +29,14 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         self.session = MCSession(peer: peerID)
         self.browser = MCBrowserViewController(serviceType: "connection", session: session)
         self.assistant = MCAdvertiserAssistant(serviceType: "connection", discoveryInfo: nil, session: session)
-        
+
         assistant.start()
+        session.delegate = self
+        browser.delegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         session.delegate = self
         browser.delegate = self
     }
@@ -40,19 +45,27 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         let playType = multiOrSingle.selectedSegmentIndex
         if (playType == 0){
             print("Its solo mode")
+            if (session.connectedPeers.count == 0){
             performSegue(withIdentifier: "startQuiz", sender: self)
+            }
+            else{createAlert(body:" Can't play single while connected to another device")}
         }
         else if (playType == 1){
-            if (connectedPeers.count < 1){
+            if (session.connectedPeers.count < 1){
                 createAlert(body: "You are not connected to anyone")
             }
-            else if (connectedPeers.count > 3){
-                createAlert(body: "You are connected to more than 3 people. Please disconnect some players")
+            else if (session.connectedPeers.count > 3){
+                createAlert(body: "You are connected to more than 3 people. Please disconnect from some players")
             }
             //TODO start game for all players
-            performSegue(withIdentifier: "startQuiz", sender: self)
-            print("it's multi player time")
-           
+            let data =  NSKeyedArchiver.archivedData(withRootObject: "multi")
+            do{
+                print("it's multi player time")
+                print(session.connectedPeers.count, " connected peeers VC")
+                try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+                performSegue(withIdentifier: "startQuiz", sender: self)
+            }
+            catch let err {print("This error hapenend ", err)}
         }
     }
     
@@ -63,46 +76,54 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         switch state {
             case MCSessionState.connected:
-                connectedPeers.append(peerID)
                 numOfPlayers = numOfPlayers + 1
                 print("Connected: \(peerID.displayName)")
-            
+
             case MCSessionState.connecting:
                 print("Connecting: \(peerID.displayName)")
-            
+
             case MCSessionState.notConnected:
-                connectedPeers = connectedPeers.filter({ $0 !== peerID })
                 numOfPlayers = numOfPlayers - 1
                 print("Not Connected: \(peerID.displayName)")
         }
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "startQuiz" {
-            if let viewController = segue.destination as? QuizViewController {
-                viewController.numOfPlayers = numOfPlayers
-                viewController.session = session
+            if let QuizViewController = segue.destination as? QuizViewController {
+                QuizViewController.numOfPlayers = numOfPlayers
+                QuizViewController.session = session
+                QuizViewController.browser = browser
             }
         }
     }
-    
+
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        print("recieving stuff")
+        print("inside didReceiveData")
+        // this needs to be run on the main thread
+        DispatchQueue.main.async(execute: {
+            if let receivedString = NSKeyedUnarchiver.unarchiveObject(with: data) as? String{
+                if (receivedString == "multi"){
+                    self.performSegue(withIdentifier: "startQuiz", sender: self)
+                }
+            }
+        })
+
     }
-    
+
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
     }
-    
+
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
     }
-    
+
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
     }
-    
+
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         dismiss(animated: true, completion: nil)
     }
-    
+
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         dismiss(animated: true, completion: nil)
     }

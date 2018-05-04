@@ -25,9 +25,8 @@ struct QuizResponse: Decodable {
     }
 }
 
-class QuizViewController: UIViewController  {
-    
-    
+class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate  {
+
     //temp data
     var  questions = ["Favorite pet?", "Favorite Color?", "Favorite city?"]
     var answersChoices = [["dog", "cat", "bird", "cow"], ["blue", "purple", "red", "green"], ["New York   ", "Tokyo", "Richmond", "Paris"]]
@@ -55,6 +54,7 @@ class QuizViewController: UIViewController  {
     var selectedAnswer: Int = -1
     var lastZ = 0
     var session : MCSession!
+    var browser: MCBrowserViewController!
     
     //Mark IB-Outlets
     @IBOutlet weak var timerLabel: UILabel!
@@ -85,13 +85,15 @@ class QuizViewController: UIViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print(session.connectedPeers.count, "connected peers")
+        session.delegate = self
+        browser.delegate = self
        // setUpConnectivity()
         grabQuizJSON()
         
         self.becomeFirstResponder()
         
-        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
+//        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
         
         ResetBtn.alpha = 0
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
@@ -217,6 +219,10 @@ class QuizViewController: UIViewController  {
         }
        
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.moitionMangager.stopDeviceMotionUpdates()
+    }
     
     func grabQuizJSON() {
         guard let url = URL(string: jsonUrlString) else {
@@ -263,7 +269,7 @@ class QuizViewController: UIViewController  {
     
     func newQuestion() {
         
-        seconds = 5
+        seconds = 20
         questionCount.text = "Question \(currQuestion+1)/\(questions.count)"
         print("New question number", currQuestion)
         question.text = questions[currQuestion]
@@ -323,31 +329,29 @@ class QuizViewController: UIViewController  {
  */
     
     func sendAnswer() {
-       print( session.connectedPeers.count )
-        if (submitted){
-            let dataToSend =  NSKeyedArchiver.archivedData(withRootObject: currAnswer)
-            do{
-                try session.send(dataToSend, toPeers: session.connectedPeers, with: .reliable)
-            }
-            catch let err {
-                print("Error in sending data \(err)")
-            }
+        var msg = ""
+        switch currAnswer{
+        case 1:
+            msg = "A"
+        case 2:
+            msg = "B"
+        case 3:
+            msg = "C"
+        case 4:
+            msg = "D"
+        default:
+           msg = "ER"
+        }
+        let dataToSend =  NSKeyedArchiver.archivedData(withRootObject: msg)
+        
+        do{
+            try session.send(dataToSend, toPeers: session.connectedPeers, with: .unreliable)
+            print("sucess in sending")
+        }
+        catch let err {
+            print("Error in sending data \(err)")
         }
     }
-    
-    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID){
-        DispatchQueue.main.async(execute: {
-            if let receivedString = NSKeyedUnarchiver.unarchiveObject(with: data) as? String{
-                self.updateScore(score: receivedString, id: peerID)
-            }
-            
-        })
-        
-    }
-    func updateScore(score: String, id: MCPeerID){
-        print(score, ": recieved score  ", id, " :peer ID ")
-    }
-    
     
     
     func submit() {
@@ -365,7 +369,7 @@ class QuizViewController: UIViewController  {
         default:
             p1Answer.alpha = 0
         }
-        
+        sendAnswer()
         if (currAnswer == correctAnswer){
             p1Points = p1Points + 1
             p1Score.text = "\(p1Points)"
@@ -420,8 +424,10 @@ class QuizViewController: UIViewController  {
             TIMER.invalidate()
 
             print("will be submitting answer") //TODO send answer
-            submit()
-    
+            if (!submitted){
+                submit()
+            }
+            
             if (currQuestion != questions.count){
                 seconds = 5
                 TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
@@ -438,8 +444,55 @@ class QuizViewController: UIViewController  {
         }
     }
     
+    func updatePlayerAnswers(answer: String, id: Int) {
+        print ("hey moriah")
+        print(id, "id in method")
+        switch id {
+        case 0:
+            p2Answer.text = answer
+            print("answer 2")
+        case 1:
+            p3Answer.text = answer
+        case 2:
+            p4Answer.text = answer
+        default:
+            print ("you are out of bounds")
+        }
+    }
+    
     @IBAction func resetTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "backToMain", sender: self)
     }
+    
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+    }
+    
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+    }
+    
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+    }
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        // this needs to be run on the main thread
+        DispatchQueue.main.async(execute: {
+            if let receivedString = NSKeyedUnarchiver.unarchiveObject(with: data) as? String {
+                let id = session.connectedPeers.index(of: peerID)
+                print(id!, ": id sending anwer")
+                print(receivedString, "answer")
+                self.updatePlayerAnswers(answer: receivedString, id: id!)
+            }
+        })
+    }
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+    }
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+    }
+
 
 }

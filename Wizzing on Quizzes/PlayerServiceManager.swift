@@ -7,9 +7,12 @@
 //
 //*************FILE NOT IN USE*********************//
 import Foundation
+import UIKit
 import MultipeerConnectivity
 
 class PlayerServiceManager: NSObject {
+
+    
     private let PlayerServiceType = "connect-player"
 
     
@@ -52,6 +55,15 @@ extension PlayerServiceManager : MCNearbyServiceAdvertiserDelegate {
         invitationHandler(true, self.session)
     }
     
+}
+extension PlayerServiceManager : MCBrowserViewControllerDelegate{
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+        
+    }
+    
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+        
+    }
 }
 
 extension PlayerServiceManager : MCNearbyServiceBrowserDelegate {

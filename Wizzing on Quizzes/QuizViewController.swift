@@ -100,7 +100,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         
         self.becomeFirstResponder()
         
-//        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
+        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
         
         ResetBtn.alpha = 0
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
@@ -148,6 +148,15 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                 
             } else {
                 print("where's all the data")
+            }
+        }
+    }
+    
+    @objc func checkForYaw() {
+        if let data = moitionMangager.deviceMotion {
+            let yaw = data.attitude.yaw
+            if yaw > 1 || yaw < -1 {
+                submit()
             }
         }
     }

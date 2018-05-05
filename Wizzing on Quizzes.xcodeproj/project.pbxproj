@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		41103075209B23EA00C8B2C0 /* arrayExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41103074209B23EA00C8B2C0 /* arrayExt.swift */; };
 		411360A8209252880049D296 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411360A7209252880049D296 /* QuizViewController.swift */; };
+		413C6DAC209D2EEC006E0DA1 /* dViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 413C6DAB209D2EEC006E0DA1 /* dViewController.swift */; };
 		414A6E49209D12B20031685C /* PeerServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414A6E48209D12B20031685C /* PeerServiceManager.swift */; };
 		418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418B454A208F9064000EA384 /* PlayerServiceManager.swift */; };
 		41FE15B3208A7F2500C19B78 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FE15B2208A7F2500C19B78 /* AppDelegate.swift */; };
@@ -41,6 +42,7 @@
 /* Begin PBXFileReference section */
 		41103074209B23EA00C8B2C0 /* arrayExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = arrayExt.swift; sourceTree = "<group>"; };
 		411360A7209252880049D296 /* QuizViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
+		413C6DAB209D2EEC006E0DA1 /* dViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dViewController.swift; sourceTree = "<group>"; };
 		414A6E48209D12B20031685C /* PeerServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerServiceManager.swift; sourceTree = "<group>"; };
 		418B454A208F9064000EA384 /* PlayerServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerServiceManager.swift; sourceTree = "<group>"; };
 		41FE15AF208A7F2500C19B78 /* Wizzing on Quizzes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wizzing on Quizzes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +120,7 @@
 				411360A7209252880049D296 /* QuizViewController.swift */,
 				41103074209B23EA00C8B2C0 /* arrayExt.swift */,
 				414A6E48209D12B20031685C /* PeerServiceManager.swift */,
+				413C6DAB209D2EEC006E0DA1 /* dViewController.swift */,
 			);
 			path = "Wizzing on Quizzes";
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				41FE15B5208A7F2500C19B78 /* ViewController.swift in Sources */,
 				41103075209B23EA00C8B2C0 /* arrayExt.swift in Sources */,
 				411360A8209252880049D296 /* QuizViewController.swift in Sources */,
+				413C6DAC209D2EEC006E0DA1 /* dViewController.swift in Sources */,
 				414A6E49209D12B20031685C /* PeerServiceManager.swift in Sources */,
 				41FE15BB208A7F2500C19B78 /* Wizzing_on_Quizzes.xcdatamodeld in Sources */,
 				418B454B208F9064000EA384 /* PlayerServiceManager.swift in Sources */,

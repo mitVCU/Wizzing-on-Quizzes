@@ -84,6 +84,12 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     @IBOutlet weak var flipBubble1: UIImageView!
     @IBOutlet weak var flipBubble2: UIImageView!
     
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+        print ("mem problem")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print(session.connectedPeers.count, "connected peers")
@@ -430,7 +436,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             }
             
             if (currQuestion != questions.count){
-                seconds = 5
+                seconds = 20
                 TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
                 newQuestion()
                 submitted = false

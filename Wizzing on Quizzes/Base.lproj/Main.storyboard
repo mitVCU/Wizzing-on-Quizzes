@@ -56,7 +56,6 @@
                                 <state key="normal" title="Start Quiz"/>
                                 <connections>
                                     <action selector="onClickStartQuiz:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XKO-wr-51q"/>
-                                    <segue destination="1gc-br-UJA" kind="show" identifier="startQuiz" id="Xkc-ge-Puu"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -87,6 +86,7 @@
                         <outlet property="multiOrSingle" destination="l4K-rK-sTV" id="XxH-te-QRP"/>
                         <outlet property="onClickConnect" destination="lsb-bM-uTq" id="RUA-lb-mOj"/>
                         <outlet property="startQuiz" destination="fK4-ja-oyd" id="fEb-AN-LDY"/>
+                        <segue destination="1gc-br-UJA" kind="show" identifier="startQuiz" id="8yS-vm-Hw9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -428,7 +428,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6UY-wb-RKR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2138" y="132"/>
+            <point key="canvasLocation" x="2049" y="132"/>
         </scene>
     </scenes>
     <resources>
@@ -442,7 +442,7 @@
         <image name="table" width="6000" height="4000"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Xkc-ge-Puu"/>
+        <segue reference="8yS-vm-Hw9"/>
         <segue reference="cjE-mm-naP"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -55,6 +55,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     var lastZ = 0
     var session : MCSession!
     var browser: MCBrowserViewController!
+    var answerLetter = String()
     var myName: String!
     var quizNumber = 1
     
@@ -97,14 +98,12 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         print(session.connectedPeers.count, "connected peers")
         session.delegate = self
         browser.delegate = self
+       // setUpConnectivity()
         grabQuizJSON()
-        
-        myName =  String(UIDevice.current.name.first!)
-        p1Name.text = myName
         
         self.becomeFirstResponder()
         
-        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
+//        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
         
         ResetBtn.alpha = 0
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
@@ -152,15 +151,6 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                 
             } else {
                 print("where's all the data")
-            }
-        }
-    }
-    
-    @objc func checkForYaw() {
-        if let data = moitionMangager.deviceMotion {
-            let yaw = data.attitude.yaw
-            if yaw > 1 || yaw < -1 {
-                submit()
             }
         }
     }
@@ -246,9 +236,6 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     
     func grabQuizJSON() {
         guard let url = URL(string: jsonUrlString) else {
-            self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz1.json"
-            "hi mo"
-            grabQuizJSON()
             return
         }
         URLSession.shared.dataTask(with: url) { (data, response, err) in
@@ -258,12 +245,8 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             do {
                 let quiz = try JSONDecoder().decode(QuizResponse.self, from: data)
                 self.saveJSONData(quiz: quiz)
-                print(quiz)
             } catch let jsonError {
                 print("Error decoding json", jsonError)
-                self.quizNumber = 1
-                self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz1.json"
-                self.grabQuizJSON()
             }
             }.resume()
     }
@@ -359,22 +342,32 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         }
     }
  */
+    func sendScore(){
+        print ("sending score")
+        let dataToSend = NSKeyedArchiver.archivedData(withRootObject: ["score", "\(p1Points)"])
+        do{
+            try session.send(dataToSend, toPeers: session.connectedPeers, with: .unreliable)
+            print(" sending score")
+        }
+        catch let err {
+            print("Error in sending data \(err)")
+        }
+    }
     
     func sendAnswer() {
-        var msg = ""
         switch currAnswer{
         case 1:
-            msg = "A"
+            answerLetter = "A"
         case 2:
-            msg = "B"
+            answerLetter = "B"
         case 3:
-            msg = "C"
+            answerLetter = "C"
         case 4:
-            msg = "D"
+            answerLetter = "D"
         default:
-           msg = "ER"
+           answerLetter = " "
         }
-        let dataToSend =  NSKeyedArchiver.archivedData(withRootObject: msg)
+        let dataToSend =  NSKeyedArchiver.archivedData(withRootObject: ["asnwer", answerLetter])
         
         do{
             try session.send(dataToSend, toPeers: session.connectedPeers, with: .unreliable)
@@ -406,7 +399,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             p1Points = p1Points + 1
             p1Score.text = "\(p1Points)"
         }
-        
+        sendScore()
         currAnswer = -1
         
         if (numOfPlayers == 1) {
@@ -425,7 +418,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     }
     
     func endGame() {
-    
+        
         if numOfPlayers == 1 {
             // that short so it fits on a small screen
             timerLabel.text = "Game Over: \(p1Points) points"
@@ -475,6 +468,22 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             seconds = seconds - 1
         }
     }
+    func updatePlayerScore(score:Int, id:Int) {
+        print ("hey moriah")
+        print(id, "id in method")
+        print(score, "score that sent to blah")
+        switch id {
+        case 0:
+            p2Score.text = "\(score)"
+            print("answer 2")
+        case 1:
+            p3Score.text = "\(score)"
+        case 2:
+            p4Score.text = "\(score)"
+        default:
+            print ("you are out of bounds")
+        }
+    }
     
     func updatePlayerAnswers(answer: String, id: Int) {
         print ("hey moriah")
@@ -493,30 +502,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     }
     
     @IBAction func resetTapped(_ sender: Any) {
-        //Find new JSON
-        
-        quizNumber += 1
-        self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNumber).json"
-        
-        
-        print("Moriah", quizNumber)
-         currQuestion = -1
-         numberOfQuestions = 0
-         topic = ""
-         currQuestion = 0
-         correctAnswer = 0
-         seconds = 5
-         TIMER = Timer()
-         yawTimer = Timer()
-         answers = [UIButton?]()
-         currAnswer = -1
-         p1Points = 0
-         button = UIButton()
-         submitted = false
-         selectedAnswer = -1
-         lastZ = 0
-
-         viewDidLoad()
+        self.performSegue(withIdentifier: "backToMain", sender: self)
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -531,11 +517,21 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         // this needs to be run on the main thread
         DispatchQueue.main.async(execute: {
-            if let receivedString = NSKeyedUnarchiver.unarchiveObject(with: data) as? String {
+            if let receivedArray = NSKeyedUnarchiver.unarchiveObject(with: data) as? Array<String> {
+                print(receivedArray, " What I recieved")
                 let id = session.connectedPeers.index(of: peerID)
-                print(id!, ": id sending anwer")
-                print(receivedString, "answer")
-                self.updatePlayerAnswers(answer: receivedString, id: id!)
+                if (receivedArray[0] == "asnwer"){
+                    print(id!, ": id sending answer")
+                    print(receivedArray[1], "answer")
+                    print(receivedArray[1], "let answ")
+                    self.updatePlayerAnswers(answer: receivedArray[1], id: id!)
+                }
+                else if (receivedArray[0] == "score" ){
+                    print (receivedArray[1], " : sending score")
+                    let a = Int(receivedArray[1])!
+                    self.updatePlayerScore(score: a, id: id!)
+                }
+            
             }
         })
     }
@@ -547,6 +543,23 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     }
     
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+    }
+    
+    func convertAnswer(currA : Int) -> String{
+        var send = String()
+        switch currA{
+        case 1:
+            send = "A"
+        case 2:
+            send = "B"
+        case 3:
+            send = "C"
+        case 4:
+            send = "D"
+        default:
+           send = " "
+        }
+        return send
     }
 
 

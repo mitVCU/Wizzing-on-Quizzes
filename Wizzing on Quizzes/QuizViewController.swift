@@ -236,6 +236,8 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     
     func grabQuizJSON() {
         guard let url = URL(string: jsonUrlString) else {
+            self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz1.json"
+            grabQuizJSON()
             return
         }
         URLSession.shared.dataTask(with: url) { (data, response, err) in
@@ -247,6 +249,9 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                 self.saveJSONData(quiz: quiz)
             } catch let jsonError {
                 print("Error decoding json", jsonError)
+                self.quizNumber = 1
+                self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz1.json"
+                self.grabQuizJSON()
             }
             }.resume()
     }
@@ -502,7 +507,27 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     }
     
     @IBAction func resetTapped(_ sender: Any) {
-        self.performSegue(withIdentifier: "backToMain", sender: self)
+        //Find new JSON
+            quizNumber += 1
+            self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNumber).json"
+        print("Moriah", quizNumber)
+        currQuestion = -1
+        numberOfQuestions = 0
+        topic = ""
+        currQuestion = 0
+        correctAnswer = 0
+        seconds = 5
+        TIMER = Timer()
+        yawTimer = Timer()
+        answers = [UIButton?]()
+        currAnswer = -1
+        p1Points = 0
+        button = UIButton()
+        submitted = false
+        selectedAnswer = -1
+        lastZ = 0
+
+    viewDidLoad()
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {

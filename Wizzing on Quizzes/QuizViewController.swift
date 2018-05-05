@@ -281,6 +281,11 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         print("New question number", currQuestion)
         question.text = questions[currQuestion]
         
+        p1Answer.text = ""
+        p2Answer.text = ""
+        p3Answer.text = ""
+        p4Answer.text = ""
+        
         switch correctAnswers[currQuestion]{
         case "A":
             correctAnswer = 1

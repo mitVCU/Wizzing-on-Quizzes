@@ -55,6 +55,8 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     var lastZ = 0
     var session : MCSession!
     var browser: MCBrowserViewController!
+    var myName: String!
+    var quizNumber = 1
     
     //Mark IB-Outlets
     @IBOutlet weak var timerLabel: UILabel!
@@ -95,8 +97,10 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         print(session.connectedPeers.count, "connected peers")
         session.delegate = self
         browser.delegate = self
-       // setUpConnectivity()
         grabQuizJSON()
+        
+        myName =  String(UIDevice.current.name.first!)
+        p1Name.text = myName
         
         self.becomeFirstResponder()
         
@@ -242,6 +246,9 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     
     func grabQuizJSON() {
         guard let url = URL(string: jsonUrlString) else {
+            self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz1.json"
+            "hi mo"
+            grabQuizJSON()
             return
         }
         URLSession.shared.dataTask(with: url) { (data, response, err) in
@@ -251,8 +258,12 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             do {
                 let quiz = try JSONDecoder().decode(QuizResponse.self, from: data)
                 self.saveJSONData(quiz: quiz)
+                print(quiz)
             } catch let jsonError {
                 print("Error decoding json", jsonError)
+                self.quizNumber = 1
+                self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz1.json"
+                self.grabQuizJSON()
             }
             }.resume()
     }
@@ -414,7 +425,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     }
     
     func endGame() {
-        
+    
         if numOfPlayers == 1 {
             // that short so it fits on a small screen
             timerLabel.text = "Game Over: \(p1Points) points"
@@ -482,7 +493,30 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     }
     
     @IBAction func resetTapped(_ sender: Any) {
-        self.performSegue(withIdentifier: "backToMain", sender: self)
+        //Find new JSON
+        
+        quizNumber += 1
+        self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNumber).json"
+        
+        
+        print("Moriah", quizNumber)
+         currQuestion = -1
+         numberOfQuestions = 0
+         topic = ""
+         currQuestion = 0
+         correctAnswer = 0
+         seconds = 5
+         TIMER = Timer()
+         yawTimer = Timer()
+         answers = [UIButton?]()
+         currAnswer = -1
+         p1Points = 0
+         button = UIButton()
+         submitted = false
+         selectedAnswer = -1
+         lastZ = 0
+
+         viewDidLoad()
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {

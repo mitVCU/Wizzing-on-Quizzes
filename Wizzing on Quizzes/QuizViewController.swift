@@ -419,6 +419,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             }
         } else {
             //TODO check to see if other players have submitted
+            
         }
     }
     
@@ -439,6 +440,22 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                 timerLabel.text = "\(place)th with \(p1Points) Points"
             }
         }
+        
+        let yourScore = p1Points
+        let p2ScoreV = Int(self.p2Score!.text!)
+        let p3ScoreV =  Int(self.p3Score!.text!)
+        let p4ScoreV =  Int(self.p4Score!.text!)
+        
+        let scoreArray: [Int] = [yourScore, p2ScoreV!, p3ScoreV!, p4ScoreV!]
+        let max = scoreArray.max()
+        
+        if max == yourScore {
+            timerLabel.text = "You won"
+        } else {
+            timerLabel.text = "You lost"
+        }
+
+        
         ResetBtn.alpha = 1
         self.TIMER.invalidate()
     }

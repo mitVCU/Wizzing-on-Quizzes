@@ -449,13 +449,14 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         let scoreArray: [Int] = [yourScore, p2ScoreV!, p3ScoreV!, p4ScoreV!]
         let max = scoreArray.max()
         
-        if max == yourScore {
-            timerLabel.text = "You won"
-        } else {
-            timerLabel.text = "You lost"
-        }
+        if currQuestion == questions.count {
+            if max == yourScore {
+                timerLabel.text = "You won"
+            } else {
+                timerLabel.text = "You lost"
+            }
 
-        
+        }
         ResetBtn.alpha = 1
         self.TIMER.invalidate()
     }

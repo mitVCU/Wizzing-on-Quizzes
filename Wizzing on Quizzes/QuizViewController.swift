@@ -322,7 +322,9 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             }
             else if (currAnswer == sender.tag) {
                 print("Second tap")
-                submit()
+                if (!submitted){
+                    submit()
+                }
             }
             else{
                 print("Chose new answer")
@@ -460,7 +462,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                 submitted = false
                 
             }
-            else{
+            else if (currQuestion == questions.count){
               endGame()
             }
         } else {

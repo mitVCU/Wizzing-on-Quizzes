@@ -58,6 +58,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     var answerLetter = String()
     var myName: String!
     var quizNumber = 1
+    var count = 0
     
     //Mark IB-Outlets
     @IBOutlet weak var timerLabel: UILabel!
@@ -87,6 +88,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     @IBOutlet weak var flipBubble1: UIImageView!
     @IBOutlet weak var flipBubble2: UIImageView!
     
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -103,7 +105,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         
         self.becomeFirstResponder()
         
-//        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
+        yawTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(checkForYaw), userInfo: nil, repeats: true)
         
         ResetBtn.alpha = 0
         TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
@@ -408,7 +410,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         }
         sendScore()
         currAnswer = -1
-        
+        answerCount += 1
         if (numOfPlayers == 1) {
             if (currQuestion != questions.count) {
                // newQuestion()
@@ -420,7 +422,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                 endGame()
             }
         } else {
-            //TODO check to see if other players have submitted
+            
             
         }
     }
@@ -467,9 +469,26 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         //TODO: Compare to other users score
         return 1
     }
+    @objc func checkForYaw() {
+        if let data = moitionMangager.deviceMotion {
+            let yaw = data.attitude.yaw
+            if yaw > 1 || yaw < -1 {
+                if (!submitted){
+                    submit()
+                }
+            }
+        }
+    }
 
     @objc func countDown (){
-        
+        if (answerCount == numOfPlayers && currQuestion != questions.count){
+            newQuestion()
+            submitted = false
+            
+            answerCount = 0
+        }
+        else if (currQuestion == questions.count) { seconds = 0}
+       
         if (seconds == 0){
             TIMER.invalidate()
 
@@ -509,7 +528,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             print ("you are out of bounds")
         }
     }
-    
+    var answerCount = 0
     func updatePlayerAnswers(answer: String, id: Int) {
         print ("hey moriah")
         print(id, "id in method")
@@ -517,10 +536,13 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         case 0:
             p2Answer.text = answer
             print("answer 2")
+            answerCount += 1
         case 1:
             p3Answer.text = answer
+            answerCount += 1
         case 2:
             p4Answer.text = answer
+            answerCount += 1
         default:
             print ("you are out of bounds")
         }
@@ -563,22 +585,35 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
         // this needs to be run on the main thread
         DispatchQueue.main.async(execute: {
             if let receivedArray = NSKeyedUnarchiver.unarchiveObject(with: data) as? Array<String> {
-                print(receivedArray, " What I recieved")
-                let id = session.connectedPeers.index(of: peerID)
-                if (receivedArray[0] == "asnwer"){
-                    print(id!, ": id sending answer")
-                    print(receivedArray[1], "answer")
-                    print(receivedArray[1], "let answ")
-                    self.updatePlayerAnswers(answer: receivedArray[1], id: id!)
+                    print(receivedArray, " What I recieved")
+                    let id = session.connectedPeers.index(of: peerID)
+                    if (receivedArray[0] == "asnwer"){
+                        print(id!, ": id sending answer")
+                        print(receivedArray[1], "answer")
+                        print(receivedArray[1], "let answ")
+                        self.updatePlayerAnswers(answer: receivedArray[1], id: id!)
+                        self.count = self.count + 1
+                    }
+                    else if (receivedArray[0] == "score" ){
+                        print (receivedArray[1], " : sending score")
+                        let a = Int(receivedArray[1])!
+                        self.updatePlayerScore(score: a, id: id!)
+                    }
+                    else if (receivedArray[0] == "moveOn"){
+                        self.newQuestion()
                 }
-                else if (receivedArray[0] == "score" ){
-                    print (receivedArray[1], " : sending score")
-                    let a = Int(receivedArray[1])!
-                    self.updatePlayerScore(score: a, id: id!)
-                }
-            
             }
         })
+    }
+    func moveOn()  {
+        let dataToSend = NSKeyedArchiver.archivedData(withRootObject: ["moveOn", " "])
+        do{
+            try session.send(dataToSend, toPeers: session.connectedPeers, with: .unreliable)
+            print(" moving on")
+        }
+        catch let err {
+            print("Error in sending data \(err)")
+        }
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {

@@ -38,7 +38,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     var topic = ""
     var currQuestion = 0
     var correctAnswer = 0
-    var seconds = 5
+    var seconds = 20
     var TIMER = Timer()
     var yawTimer = Timer()
     var answers = [UIButton?]()
@@ -88,16 +88,8 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     @IBOutlet weak var flipBubble1: UIImageView!
     @IBOutlet weak var flipBubble2: UIImageView!
     
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-        print ("mem problem")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(session.connectedPeers.count, "connected peers")
         session.delegate = self
         browser.delegate = self
        // setUpConnectivity()
@@ -318,6 +310,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
           //  button.addTarget(self, action: #selector(multipleTap(_:event:)), for: UIControlEvents.touchDownRepeat)
         }
         currQuestion = currQuestion + 1
+        submitted = false
     }
     
     @IBAction func answerTapped(_ sender: UIButton) {
@@ -340,7 +333,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                 sender.alpha = 0.5
             }
         }
-        print(currAnswer)
+        print(currAnswer, "Current Answer")
     }
     
     /*
@@ -418,7 +411,7 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
              //   seconds = 6
                 
                 seconds = 0
-            } else {
+            } else if (currQuestion >= questions.count) {
                 endGame()
             }
         } else {
@@ -481,30 +474,30 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
     }
 
     @objc func countDown (){
-        if (answerCount == numOfPlayers && currQuestion != questions.count){
+        if (numOfPlayers > 1 && answerCount == numOfPlayers && currQuestion != questions.count){
             newQuestion()
             submitted = false
             
             answerCount = 0
         }
-        else if (currQuestion == questions.count) { seconds = 0}
+        else if (currQuestion > questions.count) { seconds = 0}
        
         if (seconds == 0){
             TIMER.invalidate()
 
-            print("will be submitting answer") //TODO send answer
             if (!submitted){
+                print("will be submitting answer") //TODO send answer
                 submit()
             }
             
-            if (currQuestion != questions.count){
+            if (currQuestion < questions.count){
                 seconds = 20
                 TIMER = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(countDown), userInfo: nil, repeats: true)
                 newQuestion()
                 submitted = false
                 
             }
-            else if (currQuestion == questions.count){
+            else if (currQuestion >= questions.count){
               endGame()
             }
         } else {
@@ -553,23 +546,63 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
             quizNumber += 1
             self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNumber).json"
         print("Moriah", quizNumber)
-        currQuestion = -1
+     
+        numberOfQuestions = 0
+        topic = ""
+         currQuestion = 0
+         correctAnswer = 0
+         seconds = 20
+         TIMER = Timer()
+         yawTimer = Timer()
+         answers = [UIButton?]()
+         currAnswer = -1
+         numOfPlayers = 1
+         p1Points = 0
+         button = UIButton()
+         submitted = false
+        selectedAnswer = -1
+         lastZ = 0
+         answerLetter = String()
+         quizNumber = 1
+         count = 0
+        let dataToSend = NSKeyedArchiver.archivedData(withRootObject: ["reset", " "])
+        do{
+            try session.send(dataToSend, toPeers: session.connectedPeers, with: .unreliable)
+            print(" reset all")
+        }
+        catch let err {
+            print("Error in sending data \(err)")
+        }
+    viewDidLoad()
+    }
+    
+    func reset() {
+        //Find new JSON
+        quizNumber += 1
+        self.jsonUrlString = "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNumber).json"
+        print("Moriah", quizNumber)
+        
         numberOfQuestions = 0
         topic = ""
         currQuestion = 0
         correctAnswer = 0
-        seconds = 5
+        seconds = 20
         TIMER = Timer()
         yawTimer = Timer()
         answers = [UIButton?]()
         currAnswer = -1
+        numOfPlayers = 1
         p1Points = 0
         button = UIButton()
         submitted = false
+        moitionMangager = CMMotionManager()
         selectedAnswer = -1
         lastZ = 0
-
-    viewDidLoad()
+        answerLetter = String()
+        quizNumber = 1
+        count = 0
+        
+        viewDidLoad()
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -598,6 +631,9 @@ class QuizViewController: UIViewController, MCBrowserViewControllerDelegate, MCS
                         print (receivedArray[1], " : sending score")
                         let a = Int(receivedArray[1])!
                         self.updatePlayerScore(score: a, id: id!)
+                    }
+                    else if (receivedArray[0] == "reset"){
+                        self.reset()
                     }
                     else if (receivedArray[0] == "moveOn"){
                         self.newQuestion()
